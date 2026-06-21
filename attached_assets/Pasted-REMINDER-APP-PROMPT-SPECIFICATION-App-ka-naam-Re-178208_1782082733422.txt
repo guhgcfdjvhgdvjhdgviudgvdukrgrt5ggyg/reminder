@@ -1,0 +1,136 @@
+REMINDER APP - PROMPT / SPECIFICATION
+==========================================
+
+App ka naam: Reminder App (Events & Schedule Alarm)
+Platform: Android Native (Kotlin)
+
+MAQSAD (GOAL)
+-------------
+Aik Android app banao jisme user apne events aur schedules add kar
+sake (jaise meeting, namaz, medicine time, birthday, koi bhi kaam).
+Jab us event/schedule ka waqt aaye to app:
+1. Aik ALERT/NOTIFICATION dikhaye (screen pe popup ya notification)
+2. Saath mein TONE/SOUND bajaye (ringtone jaisa - jab tak user band na kare)
+Yeh exact us tarah kaam kare jaise mobile ka Alarm Clock kaam karta hai,
+lekin events/schedules ke naam aur details ke sath.
+
+MAIN FEATURES
+-------------
+
+1. Home Screen (Reminder List)
+   - Sab upcoming reminders ek list mein dikhein (date, time, title ke
+     sath, sorted by nearest time pehle)
+   - Har reminder card pe: title, date, time, tone ka naam, status
+     (ON/OFF toggle switch)
+   - "+" floating button se naya reminder add karna
+   - Tap kar ke edit karna
+   - Swipe ya delete button se reminder delete karna
+   - Past/completed reminders ko alag tab ya section mein dikhana
+
+2. Add/Edit Reminder Screen
+   - Title (event ka naam) - text field
+   - Description (optional notes) - text field
+   - Date picker (calendar se date select karna)
+   - Time picker (ghanta/minute select karna)
+   - Repeat option: One-time / Daily / Weekly / Monthly / Custom days
+     (Mon, Tue, Wed... checkboxes)
+   - Tone/Alert sound select karna:
+     * Default system alarm tones ki list se choose karna
+     * Ya phone ki apni ringtone/notification sounds use karna
+     * Preview button (tap kar ke sound suun sakein select karne se pehle)
+   - Vibration ON/OFF toggle
+   - Snooze option (5 min / 10 min / 15 min - jab alert aaye to
+     "Snooze" button se thori der baad dobara remind ho)
+   - Save button
+
+3. Alert/Notification Behavior (sabse zaroori part)
+   - Jab reminder ka time aaye:
+     * Full-screen alert dikhe (jaise alarm clock - phone lock ho tab bhi)
+     * Tone/sound bajna shuru ho jaye (loop mein, jab tak band na ho)
+     * Vibration bhi chale (agar ON hai)
+     * Do buttons dikhein: "Dismiss" (band karna) aur "Snooze" (kuch
+       der baad dobara yaad dilana)
+   - Agar phone band/silent mode pe ho, tab bhi tone bajni chahiye
+     (jaise alarm karta hai) - is ke liye Android ke AlarmManager
+     (setExactAndAllowWhileIdle) + full-screen Activity intent use
+     karna hoga, sirf normal Notification se kaam nahi chalega
+   - Reminder exact time par fire ho, chahe app band ho ya background
+     mein ho
+
+4. Settings Screen (optional but useful)
+   - Default tone select karna (jo naye reminders mein automatically lag jaye)
+   - Default vibration setting
+   - App ka theme (Light/Dark)
+   - "Battery optimization se app ko exclude karein" wala button
+     (taake Android reminder ko background mein kill na kare)
+
+DATA STORAGE
+------------
+- Sab reminders ka data Room Database (SQLite) mein save ho:
+  Table: Reminder (id, title, description, dateTime, repeatType,
+  repeatDays, toneUri, vibrationEnabled, isActive, snoozeMinutes)
+
+TECHNICAL REQUIREMENTS
+-----------------------
+- Kotlin
+- minSdk 24, targetSdk 34
+- Libraries:
+  * androidx.room (database)
+  * androidx.work (agar background scheduling ke liye chahiye)
+  * material components (UI)
+  * AlarmManager (system) - exact time alerts ke liye
+  * RingtoneManager / MediaPlayer - tone bajane ke liye
+- Permissions chahiye honge:
+  * SCHEDULE_EXACT_ALARM (Android 12+)
+  * USE_FULL_SCREEN_INTENT
+  * POST_NOTIFICATIONS (Android 13+)
+  * RECEIVE_BOOT_COMPLETED (taake phone restart hone par bhi
+    reminders dobara schedule ho jayein)
+  * VIBRATE
+  * WAKE_LOCK (taake phone so raha ho to bhi alert aa sake)
+
+FILE/CLASS STRUCTURE (suggested)
+----------------------------------
+- MainActivity.kt            -> Reminder list home screen
+- AddEditReminderActivity.kt  -> naya reminder add/edit karne ki screen
+- Reminder.kt (Entity)         -> Room database model
+- ReminderDao.kt                -> database queries
+- ReminderDatabase.kt            -> Room database setup
+- ReminderRepository.kt          -> data layer
+- ReminderAdapter.kt              -> RecyclerView adapter for list
+- AlarmScheduler.kt                -> AlarmManager se reminder schedule
+                                      karna / cancel karna
+- AlarmReceiver.kt (BroadcastReceiver) -> jab alarm fire ho tab yeh
+                                      trigger ho aur full-screen
+                                      alert Activity khole
+- FullScreenAlertActivity.kt        -> jo screen lock hone par bhi
+                                      dikhe, tone bajaye, Dismiss/Snooze
+                                      buttons dikhaye
+- BootReceiver.kt (BroadcastReceiver) -> phone restart hone par sab
+                                      active reminders dobara schedule
+                                      karna
+- TonePickerHelper.kt                -> system ringtones ki list
+                                      laana aur preview bajana
+
+NOTIFICATION CHANNEL SETUP
+----------------------------
+- Aik high-importance NotificationChannel banayein (IMPORTANCE_HIGH)
+  jisme custom sound aur vibration pattern set ho, taake Android
+  Doze mode mein bhi alert time par aa sake
+
+FUTURE ADD-ONS (OPTIONAL)
+--------------------------
+- Calendar view (month grid mein sab reminders dikhana)
+- Category/tags (Work, Health, Personal) color codes ke sath
+- Location-based reminders (jab kisi jagah pohanchein to remind ho)
+- Widget (home screen pe upcoming reminder dikhana)
+- Cloud backup/sync (Google account se)
+- Dark mode + custom themes
+
+NOTE
+----
+Yeh ek generic, well-known Android engineering pattern hai (jaisa
+har Alarm Clock ya Reminder app use karta hai) - AlarmManager exact
+alarms + BroadcastReceiver + full-screen Activity. Kisi maujooda app
+ka code copy nahi, sirf standard architecture hai jo aap khud se
+implement kar sakte hain.
