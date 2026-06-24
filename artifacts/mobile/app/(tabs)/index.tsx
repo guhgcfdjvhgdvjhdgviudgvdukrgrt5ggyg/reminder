@@ -98,7 +98,6 @@ export default function HomeScreen() {
           styles.listContent,
           { paddingBottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 90 },
         ]}
-        staggeredAppearance
         renderSectionHeader={({ section }) => (
           <View style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
             <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
