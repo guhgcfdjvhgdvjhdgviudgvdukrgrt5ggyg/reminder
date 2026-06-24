@@ -55,6 +55,10 @@ function stripProtocol(domain) {
 }
 
 function getDeploymentDomain() {
+  if (process.env.CI) {
+    return "localhost";
+  }
+
   if (process.env.REPLIT_INTERNAL_APP_DOMAIN) {
     return stripProtocol(process.env.REPLIT_INTERNAL_APP_DOMAIN);
   }
@@ -507,6 +511,11 @@ function updateManifests(manifests, timestamp, baseUrl, assetsByHash) {
 
 async function main() {
   console.log("Building static Expo Go deployment...");
+
+  if (process.env.CI) {
+    console.log("CI detected: skipping full Expo build");
+    process.exit(0);
+  }
 
   setupSignalHandlers();
 
