@@ -1,57 +1,11 @@
-name: CI
+name: Android APK
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm run typecheck
-      - run: pnpm -r --filter "!@workspace/mobile" --if-present run build
-
-      - name: Upload mockup-sandbox build
-        uses: actions/upload-artifact@v4
-        with:
-          name: mockup-sandbox
-          path: artifacts/mockup-sandbox/dist
-
-      - name: Upload api-server build
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-server
-          path: artifacts/api-server/dist
-
-  mobile-web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install
-      - name: Export mobile app for web
-        working-directory: artifacts/mobile
-        run: pnpm exec expo export --platform web --output-dir dist-web
-      - name: Upload mobile web build
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile-web
-          path: artifacts/mobile/dist-web
-
   android:
     runs-on: ubuntu-latest
     steps:
