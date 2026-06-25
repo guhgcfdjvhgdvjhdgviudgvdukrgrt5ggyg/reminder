@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DateTimePickerModal } from '@/components/DateTimePickerModal';
 import { useReminders } from '@/context/RemindersContext';
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 import {
   DAY_NAMES,
   REPEAT_LABELS,
@@ -118,7 +118,7 @@ export default function AddReminderScreen() {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: topPad + 12, borderBottomColor: colors.border }]}>
+      <View style={[styles.header, { paddingTop: topPad + spacing.lg, borderBottomColor: colors.border }]}>
         <Pressable onPress={() => router.back()} style={styles.headerBtn}>
           <Text style={[styles.headerBtnText, { color: colors.mutedForeground }]}>Cancel</Text>
         </Pressable>
@@ -137,7 +137,7 @@ export default function AddReminderScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingBottom: bottomPad + 32 }]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: bottomPad + spacing['5xl'] }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -314,116 +314,116 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingHorizontal: spacing['2xl'],
+    paddingBottom: spacing.xl,
     borderBottomWidth: 1,
   },
   headerBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.md,
     minWidth: 72,
     alignItems: 'center',
   },
   headerSaveBtn: {},
   headerBtnText: {
-    fontSize: 15,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.semiBold,
   },
   headerTitle: {
-    fontSize: 17,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['3xl'],
+    fontFamily: fontFamily.semiBold,
   },
   scroll: {
-    paddingTop: 16,
+    paddingTop: spacing['2xl'],
   },
   sectionLabel: {
-    fontSize: 11,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.semiBold,
     letterSpacing: 1,
-    marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 8,
+    marginHorizontal: spacing['3xl'],
+    marginTop: spacing['3xl'],
+    marginBottom: spacing.md,
   },
   card: {
-    marginHorizontal: 16,
-    borderRadius: 16,
+    marginHorizontal: spacing['2xl'],
+    borderRadius: borderRadius['2xl'],
     borderWidth: 1,
     overflow: 'hidden',
   },
   titleInput: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    fontSize: 17,
-    fontFamily: 'Inter_500Medium',
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing['2xl'],
+    fontSize: fontSize['3xl'],
+    fontFamily: fontFamily.medium,
   },
   descInput: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    fontFamily: 'Inter_400Regular',
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.xl,
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.regular,
     minHeight: 64,
     textAlignVertical: 'top',
   },
   divider: {
     height: 1,
-    marginHorizontal: 16,
+    marginHorizontal: spacing['2xl'],
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.xl,
   },
   rowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.lg,
     flex: 1,
   },
   rowRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.sm,
   },
   rowIcon: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   rowLabel: {
-    fontSize: 15,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.medium,
   },
   rowValue: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.medium,
   },
   chipsWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    padding: 14,
+    gap: spacing.md,
+    padding: spacing.xl,
   },
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 100,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.full,
     borderWidth: 1,
   },
   chipText: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.medium,
   },
   daysWrap: {
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingBottom: 14,
-    paddingTop: 4,
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+    paddingTop: spacing.xs,
   },
   dayChip: {
     width: 38,
@@ -434,19 +434,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayChipText: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.sm,
+    fontFamily: fontFamily.semiBold,
   },
   snoozeSection: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 14,
-    gap: 12,
+    paddingHorizontal: spacing['2xl'],
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.xl,
+    gap: spacing.lg,
   },
   snoozeChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginLeft: 48,
+    gap: spacing.md,
+    marginLeft: spacing['6xl'] - spacing.xl,
   },
 });

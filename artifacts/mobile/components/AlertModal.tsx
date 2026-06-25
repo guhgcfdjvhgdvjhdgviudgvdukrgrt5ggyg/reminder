@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useReminders } from '@/context/RemindersContext';
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 
 export function AlertModal() {
   const { activeAlert, dismissAlert, snoozeAlert } = useReminders();
@@ -55,8 +55,8 @@ export function AlertModal() {
             {
               backgroundColor: colors.card,
               borderColor: colors.border,
-              paddingBottom: insets.bottom + 20,
-              paddingTop: insets.top + 20,
+              paddingBottom: insets.bottom + spacing['3xl'],
+              paddingTop: insets.top + spacing['3xl'],
             },
           ]}
         >
@@ -115,15 +115,15 @@ const styles = StyleSheet.create({
   container: {
     width: Platform.OS === 'web' ? 380 : '90%',
     maxWidth: 400,
-    borderRadius: 24,
+    borderRadius: borderRadius['4xl'],
     borderWidth: 1,
     alignItems: 'center',
-    paddingHorizontal: 32,
-    gap: 8,
+    paddingHorizontal: spacing['5xl'],
+    gap: spacing.md,
   },
   bellWrap: {
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: spacing.md,
+    marginBottom: spacing['2xl'],
   },
   bellBg: {
     width: 100,
@@ -133,55 +133,55 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   timeText: {
-    fontSize: 48,
-    fontFamily: 'Inter_700Bold',
+    fontSize: fontSize['8xl'],
+    fontFamily: fontFamily.bold,
     letterSpacing: -1,
   },
   dateText: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginTop: -4,
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.regular,
+    marginTop: -spacing.xs,
   },
   title: {
-    fontSize: 22,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['5xl'],
+    fontFamily: fontFamily.semiBold,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: spacing.md,
   },
   description: {
-    fontSize: 15,
-    fontFamily: 'Inter_400Regular',
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.regular,
     textAlign: 'center',
     lineHeight: 22,
   },
   buttons: {
     width: '100%',
-    gap: 12,
-    marginTop: 24,
+    gap: spacing.lg,
+    marginTop: spacing['4xl'],
   },
   snoozeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 16,
-    borderRadius: 14,
+    gap: spacing.md,
+    paddingVertical: spacing['2xl'],
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
   },
   snoozeBtnText: {
-    fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['2xl'],
+    fontFamily: fontFamily.semiBold,
   },
   dismissBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 16,
-    borderRadius: 14,
+    gap: spacing.md,
+    paddingVertical: spacing['2xl'],
+    borderRadius: borderRadius.xl,
   },
   dismissBtnText: {
-    fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['2xl'],
+    fontFamily: fontFamily.semiBold,
   },
 });

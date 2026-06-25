@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 
 interface Props {
   icon?: keyof typeof Feather.glyphMap;
@@ -28,9 +28,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 48,
-    paddingHorizontal: 32,
-    gap: 12,
+    paddingVertical: spacing['6xl'],
+    paddingHorizontal: spacing['5xl'],
+    gap: spacing.lg,
   },
   iconWrap: {
     width: 72,
@@ -38,16 +38,16 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   title: {
-    fontSize: 17,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['3xl'],
+    fontFamily: fontFamily.semiBold,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.regular,
     textAlign: 'center',
     lineHeight: 20,
   },

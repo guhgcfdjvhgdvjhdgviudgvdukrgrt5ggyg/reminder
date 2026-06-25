@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { ReminderCard } from '@/components/ReminderCard';
 import { useReminders } from '@/context/RemindersContext';
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 import type { Reminder } from '@/types/reminder';
 
 export default function HomeScreen() {
@@ -78,7 +78,7 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: topPad + 12 }]}>
+      <View style={[styles.header, { paddingTop: topPad + spacing.lg }]}>
         <View>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>Reminders</Text>
           <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>
@@ -132,7 +132,7 @@ export default function HomeScreen() {
           styles.fab,
           {
             backgroundColor: colors.primary,
-            bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 20,
+            bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + spacing['3xl'],
           },
         ]}
         onPress={handleAdd}
@@ -144,25 +144,23 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: spacing['3xl'],
+    paddingBottom: spacing['2xl'],
   },
   headerTitle: {
-    fontSize: 32,
-    fontFamily: 'Inter_700Bold',
+    fontSize: fontSize['7xl'],
+    fontFamily: fontFamily.bold,
     letterSpacing: -0.5,
   },
   headerSubtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 2,
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.regular,
+    marginTop: spacing.xxs,
   },
   headerIcon: {
     width: 44,
@@ -170,21 +168,19 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
-  listContent: {
-    paddingTop: 8,
-  },
+  listContent: { paddingTop: spacing.md },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 12,
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.md + 2,
+    gap: spacing.lg,
   },
   sectionLabel: {
-    fontSize: 11,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.semiBold,
     letterSpacing: 1,
   },
   sectionLine: {
@@ -193,7 +189,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 20,
+    right: spacing['3xl'],
     width: 58,
     height: 58,
     borderRadius: 29,

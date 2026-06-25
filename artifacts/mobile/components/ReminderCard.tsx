@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 import type { Reminder } from '@/types/reminder';
 import { DAY_NAMES, REPEAT_LABELS } from '@/types/reminder';
 
@@ -144,7 +144,7 @@ export function ReminderCard({ reminder, onToggle, onDelete, onPress }: Props) {
         <Pressable
           onPress={handleDelete}
           hitSlop={12}
-          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1, marginTop: 8 })}
+          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1, marginTop: spacing.md })}
         >
           <Feather name="trash-2" size={18} color={colors.destructive} />
         </Pressable>
@@ -156,9 +156,9 @@ export function ReminderCard({ reminder, onToggle, onDelete, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginVertical: 6,
+    borderRadius: borderRadius['2xl'],
+    marginHorizontal: spacing['2xl'],
+    marginVertical: spacing.sm,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -170,45 +170,45 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    gap: 4,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.xs,
   },
   title: {
-    fontSize: 17,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['3xl'],
+    fontFamily: fontFamily.semiBold,
   },
   time: {
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.medium,
   },
   description: {
-    fontSize: 13,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 2,
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.regular,
+    marginTop: spacing.xxs,
   },
   tags: {
     flexDirection: 'row',
-    gap: 6,
-    marginTop: 4,
+    gap: spacing.sm,
+    marginTop: spacing.xs,
   },
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 100,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xxs + 1,
+    borderRadius: borderRadius.full,
   },
   tagText: {
-    fontSize: 11,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.medium,
   },
   actions: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 14,
-    gap: 4,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+    gap: spacing.xs,
   },
 });

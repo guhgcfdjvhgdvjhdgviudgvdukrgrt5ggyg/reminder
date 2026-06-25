@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 import { SNOOZE_OPTIONS } from '@/types/reminder';
 
 const SETTINGS_KEY = '@app_settings_v1';
@@ -53,11 +53,11 @@ export default function SettingsScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={{ paddingBottom: bottomPad + 32 }}
+      contentContainerStyle={{ paddingBottom: bottomPad + spacing['5xl'] }}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
-      <View style={[styles.header, { paddingTop: topPad + 12 }]}>
+      <View style={[styles.header, { paddingTop: topPad + spacing.lg }]}>
         <Text style={[styles.headerTitle, { color: colors.foreground }]}>Settings</Text>
       </View>
 
@@ -181,25 +181,25 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: spacing['3xl'],
+    paddingBottom: spacing['2xl'],
   },
   headerTitle: {
-    fontSize: 32,
-    fontFamily: 'Inter_700Bold',
+    fontSize: fontSize['7xl'],
+    fontFamily: fontFamily.bold,
     letterSpacing: -0.5,
   },
   sectionLabel: {
-    fontSize: 11,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.semiBold,
     letterSpacing: 1,
-    marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 8,
+    marginHorizontal: spacing['3xl'],
+    marginTop: spacing['3xl'],
+    marginBottom: spacing.md,
   },
   card: {
-    marginHorizontal: 16,
-    borderRadius: 16,
+    marginHorizontal: spacing['2xl'],
+    borderRadius: borderRadius['2xl'],
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -207,47 +207,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.xl,
     borderBottomWidth: 0,
   },
   rowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.lg,
     flex: 1,
   },
   rowLabel: {
-    fontSize: 15,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.medium,
   },
   rowSub: {
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 2,
+    fontSize: fontSize.sm,
+    fontFamily: fontFamily.regular,
+    marginTop: spacing.xxs,
   },
   iconWrap: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   chipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    gap: spacing.md,
+    paddingHorizontal: spacing['2xl'],
+    paddingBottom: spacing['2xl'],
   },
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 100,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.full,
     borderWidth: 1,
   },
   chipText: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.medium,
   },
 });

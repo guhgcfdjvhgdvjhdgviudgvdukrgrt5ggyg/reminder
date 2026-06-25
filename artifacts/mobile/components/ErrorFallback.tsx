@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useColors } from "@/hooks/useColors";
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from "@/constants/design";
 
 export type ErrorFallbackProps = {
   error: Error;
@@ -58,7 +58,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           style={({ pressed }) => [
             styles.topButton,
             {
-              top: insets.top + 16,
+              top: insets.top + spacing['2xl'],
               backgroundColor: colors.card,
               opacity: pressed ? 0.8 : 1,
             },
@@ -139,7 +139,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
                 style={styles.modalScrollView}
                 contentContainerStyle={[
                   styles.modalScrollContent,
-                  { paddingBottom: insets.bottom + 16 },
+                  { paddingBottom: insets.bottom + spacing['2xl'] },
                 ]}
                 showsVerticalScrollIndicator
               >
@@ -178,41 +178,42 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    padding: spacing['4xl'],
   },
   content: {
     alignItems: "center",
     justifyContent: "center",
-    gap: 16,
+    gap: spacing['2xl'],
     width: "100%",
     maxWidth: 600,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "700",
+    fontSize: fontSize['6xl'],
+    fontFamily: fontFamily.bold,
     textAlign: "center",
     lineHeight: 40,
   },
   message: {
-    fontSize: 16,
+    fontSize: fontSize['2xl'],
+    fontFamily: fontFamily.regular,
     textAlign: "center",
     lineHeight: 24,
   },
   topButton: {
     position: "absolute",
-    right: 16,
+    right: spacing['2xl'],
     width: 44,
     height: 44,
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 10,
   },
   button: {
-    paddingVertical: 16,
-    borderRadius: 8,
-    paddingHorizontal: 24,
+    paddingVertical: spacing['2xl'],
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing['4xl'],
     minWidth: 200,
     shadowColor: "#000",
     shadowOffset: {
@@ -224,9 +225,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   buttonText: {
-    fontWeight: "600",
+    fontFamily: fontFamily.semiBold,
     textAlign: "center",
-    fontSize: 16,
+    fontSize: fontSize['2xl'],
   },
   modalOverlay: {
     flex: 1,
@@ -236,21 +237,21 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: "100%",
     height: "90%",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: borderRadius['2xl'],
+    borderTopRightRadius: borderRadius['2xl'],
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: spacing['2xl'],
+    paddingTop: spacing['2xl'],
+    paddingBottom: spacing.lg,
     borderBottomWidth: 1,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontSize: fontSize['4xl'],
+    fontFamily: fontFamily.semiBold,
   },
   closeButton: {
     width: 44,
@@ -262,16 +263,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalScrollContent: {
-    padding: 16,
+    padding: spacing['2xl'],
   },
   errorContainer: {
     width: "100%",
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
     overflow: "hidden",
-    padding: 16,
+    padding: spacing['2xl'],
   },
   errorText: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     lineHeight: 18,
     width: "100%",
   },

@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useColors } from '@/hooks/useColors';
+import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -144,8 +144,8 @@ export function DateTimePickerModal({ visible, date, onConfirm, onCancel }: Prop
                       key={day}
                       style={[
                         styles.cell,
-                        isSelected && { backgroundColor: colors.primary, borderRadius: 999 },
-                        !isSelected && isToday && { borderRadius: 999, borderWidth: 1, borderColor: colors.primary },
+                        isSelected && { backgroundColor: colors.primary, borderRadius: borderRadius.full },
+                        !isSelected && isToday && { borderRadius: borderRadius.full, borderWidth: 1, borderColor: colors.primary },
                       ]}
                       onPress={() => selectDay(day)}
                     >
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   container: {
     width: Platform.OS === 'web' ? 360 : '92%',
     maxWidth: 380,
-    borderRadius: 20,
+    borderRadius: borderRadius['3xl'],
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -251,39 +251,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
+    gap: spacing.md,
+    paddingVertical: spacing.xl,
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
   },
   tabLabel: {
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.medium,
   },
   calendarSection: {
-    padding: 16,
+    padding: spacing['2xl'],
   },
   monthNav: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
-    paddingHorizontal: 4,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.xs,
   },
   monthLabel: {
-    fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize['2xl'],
+    fontFamily: fontFamily.semiBold,
   },
   dayHeaders: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 6,
+    marginBottom: spacing.sm,
   },
   dayHeader: {
     width: CELL_SIZE,
     textAlign: 'center',
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.sm,
+    fontFamily: fontFamily.medium,
   },
   grid: {
     flexDirection: 'row',
@@ -297,86 +297,86 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   cellText: {
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.regular,
   },
   timeSection: {
     alignItems: 'center',
-    padding: 24,
-    gap: 16,
+    padding: spacing['4xl'],
+    gap: spacing['2xl'],
   },
   timePreview: {
-    fontSize: 52,
-    fontFamily: 'Inter_700Bold',
+    fontSize: fontSize['9xl'],
+    fontFamily: fontFamily.bold,
     letterSpacing: -2,
   },
   timeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing['2xl'],
   },
   timeCol: {
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.md,
   },
   timeColLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    marginBottom: 4,
+    fontSize: fontSize.sm,
+    fontFamily: fontFamily.medium,
+    marginBottom: spacing.xs,
   },
   timeBtn: {
     width: 56,
     height: 40,
-    borderRadius: 10,
+    borderRadius: borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   timeValue: {
-    fontSize: 32,
-    fontFamily: 'Inter_700Bold',
+    fontSize: fontSize['7xl'],
+    fontFamily: fontFamily.bold,
     minWidth: 64,
     textAlign: 'center',
   },
   timeSep: {
-    fontSize: 32,
-    fontFamily: 'Inter_700Bold',
-    marginTop: 32,
+    fontSize: fontSize['7xl'],
+    fontFamily: fontFamily.bold,
+    marginTop: spacing['5xl'],
   },
   fineRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.lg,
   },
   fineBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.sm,
   },
   fineBtnText: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.medium,
   },
   footer: {
     borderTopWidth: 1,
-    padding: 16,
-    gap: 12,
+    padding: spacing['2xl'],
+    gap: spacing.lg,
   },
   summary: {
-    fontSize: 13,
-    fontFamily: 'Inter_400Regular',
+    fontSize: fontSize.md,
+    fontFamily: fontFamily.regular,
     textAlign: 'center',
   },
   footerActions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.lg,
   },
   footerBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: spacing.lg,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
   },
   footerBtnText: {
-    fontSize: 15,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: fontSize.xl,
+    fontFamily: fontFamily.semiBold,
   },
 });
