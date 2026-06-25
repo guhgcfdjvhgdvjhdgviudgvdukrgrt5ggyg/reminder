@@ -20,27 +20,23 @@ jobs:
           distribution: temurin
           java-version: 17
       - run: pnpm install
-      - name: Prebuild Android project
+
+      - name: Generate Android project
         working-directory: artifacts/mobile
         run: npx expo prebuild --platform android --no-install
-      - name: Bundle JS for Android
-        working-directory: artifacts/mobile
+
+      - name: Create debug keystore for signing
+        working-directory: artifacts/mobile/android/app
         run: |
-          mkdir -p android/app/src/main/assets
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file node_modules/expo-router/entry.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-      - name: Build debug APK (with embedded bundle)
-        working-directory: artifacts/mobile/android
-        run: ./gradlew assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: artifacts/mobile/android/app/build/outputs/apk/debug/*.apk
+          keytool -genkey -v -keystore debug.keystore \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 \
+            -validity 10000 -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Build APK with Expo
+        working-directory: artifacts/mobile
+        run: npx expo run:android --no-install --variant debug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
