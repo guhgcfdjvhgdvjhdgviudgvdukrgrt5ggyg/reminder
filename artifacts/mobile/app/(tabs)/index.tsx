@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { ReminderCard } from '@/components/ReminderCard';
 import { useReminders } from '@/context/RemindersContext';
-import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
+import { useColors, fontFamily, fontSize, spacing } from '@/constants/design';
 import type { Reminder } from '@/types/reminder';
 
 export default function HomeScreen() {
@@ -74,6 +74,8 @@ export default function HomeScreen() {
   }, [router]);
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
+  const tabBarHeight = Platform.OS === 'web' ? 84 : Platform.OS === 'ios' ? 50 : 56;
+  const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -96,7 +98,7 @@ export default function HomeScreen() {
         keyExtractor={item => item.id}
         contentContainerStyle={[
           styles.listContent,
-          { paddingBottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 90 },
+          { paddingBottom: bottomPad + tabBarHeight + spacing['3xl'] },
         ]}
         renderSectionHeader={({ section }) => (
           <View style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
@@ -126,13 +128,13 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       />
 
-      {/* FAB */}
+      {/* FAB - positioned above tab bar */}
       <Pressable
         style={[
           styles.fab,
           {
             backgroundColor: colors.primary,
-            bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + spacing['3xl'],
+            bottom: bottomPad + tabBarHeight + spacing.lg,
           },
         ]}
         onPress={handleAdd}
