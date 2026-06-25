@@ -26,8 +26,18 @@ export async function setupNotificationChannel() {
 
 export async function requestNotificationPermissions(): Promise<boolean> {
   const { status: existing } = await Notifications.getPermissionsAsync();
-  if (existing === 'granted') return true;
-  const { status } = await Notifications.requestPermissionsAsync();
+  if (existing === 'granted') {
+    if (Platform.OS === 'android') {
+      await Notifications.requestPermissionsAsync({
+        android: { shouldUseFullScreenIntent: true },
+      });
+    }
+    return true;
+  }
+  const { status } = await Notifications.requestPermissionsAsync({
+    ios: { provideAppNotificationSettings: true },
+    android: { shouldUseFullScreenIntent: true },
+  });
   return status === 'granted';
 }
 
