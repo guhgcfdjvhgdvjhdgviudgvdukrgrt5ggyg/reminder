@@ -41,7 +41,12 @@
         {
           "icon": "./assets/images/icon.png",
           "color": "#7C6FFF",
-          "defaultChannel": "reminders"
+          "defaultChannel": "reminders",
+          "sounds": [
+            "./assets/sounds/bell.wav",
+            "./assets/sounds/chime.wav",
+            "./assets/sounds/alarm.wav"
+          ]
         }
       ]
     ],

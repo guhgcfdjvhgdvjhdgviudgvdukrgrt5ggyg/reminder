@@ -35,7 +35,7 @@ function buildContent(reminder: Reminder): Notifications.NotificationContentInpu
   return {
     title: `⏰ ${reminder.title}`,
     body: reminder.description || 'Time for your reminder!',
-    sound: true,
+    sound: reminder.sound === 'default' ? true : reminder.sound,
     vibrate: reminder.vibrationEnabled ? [0, 300, 200, 300] : undefined,
     data: { reminderId: reminder.id, snoozeMinutes: reminder.snoozeMinutes },
   };

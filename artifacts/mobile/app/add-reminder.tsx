@@ -22,6 +22,7 @@ import {
   DAY_NAMES,
   REPEAT_LABELS,
   SNOOZE_OPTIONS,
+  SOUND_OPTIONS,
   type RepeatType,
 } from '@/types/reminder';
 
@@ -62,6 +63,7 @@ export default function AddReminderScreen() {
   const [repeatType, setRepeatType] = useState<RepeatType>(existing?.repeatType ?? 'once');
   const [repeatDays, setRepeatDays] = useState<number[]>(existing?.repeatDays ?? []);
   const [vibrationEnabled, setVibrationEnabled] = useState(existing?.vibrationEnabled ?? true);
+  const [sound, setSound] = useState(existing?.sound ?? 'default');
   const [snoozeMinutes, setSnoozeMinutes] = useState(existing?.snoozeMinutes ?? 5);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -97,6 +99,7 @@ export default function AddReminderScreen() {
         repeatType,
         repeatDays,
         vibrationEnabled,
+        sound,
         snoozeMinutes,
         isActive: true,
       };
@@ -110,7 +113,7 @@ export default function AddReminderScreen() {
     } finally {
       setSaving(false);
     }
-  }, [title, description, dateTime, repeatType, repeatDays, vibrationEnabled, snoozeMinutes, isEdit, existing, addReminder, updateReminder, router]);
+  }, [title, description, dateTime, repeatType, repeatDays, vibrationEnabled, sound, snoozeMinutes, isEdit, existing, addReminder, updateReminder, router]);
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
@@ -262,6 +265,38 @@ export default function AddReminderScreen() {
               thumbColor={vibrationEnabled ? colors.primary : colors.mutedForeground}
               ios_backgroundColor={colors.muted}
             />
+          </View>
+
+          {/* Sound */}
+          <View style={[styles.soundSection, { borderBottomColor: colors.border, borderBottomWidth: 1 }]}>
+            <View style={styles.rowLeft}>
+              <View style={[styles.rowIcon, { backgroundColor: colors.primary + '22' }]}>
+                <Feather name="music" size={18} color={colors.primary} />
+              </View>
+              <Text style={[styles.rowLabel, { color: colors.foreground }]}>Sound</Text>
+            </View>
+            <View style={styles.soundChips}>
+              {SOUND_OPTIONS.map(opt => (
+                <Pressable
+                  key={opt.value}
+                  style={[
+                    styles.chip,
+                    {
+                      backgroundColor: sound === opt.value ? colors.primary : colors.secondary,
+                      borderColor: sound === opt.value ? colors.primary : colors.border,
+                    },
+                  ]}
+                  onPress={() => setSound(opt.value)}
+                >
+                  <Text style={[
+                    styles.chipText,
+                    { color: sound === opt.value ? colors.primaryForeground : colors.mutedForeground },
+                  ]}>
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
           </View>
 
           {/* Snooze */}
@@ -443,10 +478,21 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
     gap: spacing.lg,
   },
+  soundSection: {
+    paddingHorizontal: spacing['2xl'],
+    paddingVertical: spacing.lg,
+  },
   snoozeChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.md,
     marginLeft: spacing['6xl'] - spacing.xl,
+  },
+  soundChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+    marginLeft: spacing['6xl'] - spacing.xl,
+    marginTop: spacing.lg,
   },
 });

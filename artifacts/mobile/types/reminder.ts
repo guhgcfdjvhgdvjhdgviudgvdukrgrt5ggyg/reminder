@@ -11,6 +11,15 @@ export const REPEAT_LABELS: Record<RepeatType, string> = {
 export const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export const DAY_NAMES_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+export const SOUND_OPTIONS = [
+  { label: 'Default', value: 'default' },
+  { label: 'Bell', value: 'bell' },
+  { label: 'Chime', value: 'chime' },
+  { label: 'Alarm', value: 'alarm' },
+] as const;
+
+export type Sound = (typeof SOUND_OPTIONS)[number]['value'];
+
 export const SNOOZE_OPTIONS = [
   { label: 'No snooze', value: 0 },
   { label: '5 minutes', value: 5 },
@@ -26,6 +35,7 @@ export interface Reminder {
   repeatType: RepeatType;
   repeatDays: number[];
   vibrationEnabled: boolean;
+  sound: Sound;
   snoozeMinutes: number;
   isActive: boolean;
   notificationIds: string[];

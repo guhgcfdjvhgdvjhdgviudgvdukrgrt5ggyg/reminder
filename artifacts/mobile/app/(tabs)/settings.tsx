@@ -15,17 +15,19 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useColors, fontFamily, fontSize, spacing, borderRadius } from '@/constants/design';
-import { SNOOZE_OPTIONS } from '@/types/reminder';
+import { SNOOZE_OPTIONS, SOUND_OPTIONS } from '@/types/reminder';
 
 const SETTINGS_KEY = '@app_settings_v1';
 
 interface AppSettings {
   defaultVibration: boolean;
+  defaultSound: string;
   defaultSnoozeMinutes: number;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   defaultVibration: true,
+  defaultSound: 'default',
   defaultSnoozeMinutes: 5,
 };
 
@@ -112,6 +114,40 @@ export default function SettingsScreen() {
               <Text style={[
                 styles.chipText,
                 { color: settings.defaultSnoozeMinutes === opt.value ? colors.primaryForeground : colors.mutedForeground },
+              ]}>
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={[styles.row, { borderBottomWidth: 0 }]}>
+          <View style={styles.rowLeft}>
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary + '22' }]}>
+              <Feather name="music" size={18} color={colors.primary} />
+            </View>
+            <View>
+              <Text style={[styles.rowLabel, { color: colors.foreground }]}>Default Sound</Text>
+              <Text style={[styles.rowSub, { color: colors.mutedForeground }]}>Notification tone for new reminders</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.chipsRow}>
+          {SOUND_OPTIONS.map(opt => (
+            <Pressable
+              key={opt.value}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: settings.defaultSound === opt.value ? colors.primary : colors.secondary,
+                  borderColor: settings.defaultSound === opt.value ? colors.primary : colors.border,
+                },
+              ]}
+              onPress={() => save({ ...settings, defaultSound: opt.value })}
+            >
+              <Text style={[
+                styles.chipText,
+                { color: settings.defaultSound === opt.value ? colors.primaryForeground : colors.mutedForeground },
               ]}>
                 {opt.label}
               </Text>
