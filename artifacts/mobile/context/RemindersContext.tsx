@@ -13,6 +13,7 @@ import {
   requestNotificationPermissions,
   scheduleReminder,
   scheduleSnooze,
+  setupNotificationChannel,
 } from '@/utils/notifications';
 
 interface RemindersContextValue {
@@ -50,6 +51,7 @@ export function RemindersProvider({ children }: { children: React.ReactNode }) {
       }
     })();
     requestNotificationPermissions();
+    setupNotificationChannel();
     return () => { mounted = false; };
   }, []);
 

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import type { Reminder } from '@/types/reminder';
 
@@ -10,6 +11,18 @@ Notifications.setNotificationHandler({
     shouldShowList: true,
   }),
 });
+
+export async function setupNotificationChannel() {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'Reminders',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 300, 200, 300],
+      enableVibrate: true,
+      sound: 'default',
+    });
+  }
+}
 
 export async function requestNotificationPermissions(): Promise<boolean> {
   const { status: existing } = await Notifications.getPermissionsAsync();
