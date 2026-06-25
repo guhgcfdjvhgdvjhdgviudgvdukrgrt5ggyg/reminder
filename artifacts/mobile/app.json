@@ -20,6 +20,7 @@
       }
     },
     "android": {
+      "package": "com.reminder.app",
       "permissions": [
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
