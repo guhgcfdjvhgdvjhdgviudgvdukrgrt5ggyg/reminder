@@ -68,7 +68,7 @@ jobs:
       - run: pnpm install
       - name: Prebuild Android project
         working-directory: artifacts/mobile
-        run: npx expo prebuild --platform android
+        run: npx expo prebuild --platform android --no-install
       - name: Build debug APK
         working-directory: artifacts/mobile/android
         run: ./gradlew assembleDebug
