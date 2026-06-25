@@ -25,15 +25,7 @@ jobs:
         working-directory: artifacts/mobile
         run: npx expo prebuild --platform android --no-install
 
-      - name: Create debug keystore for signing
-        working-directory: artifacts/mobile/android/app
-        run: |
-          keytool -genkey -v -keystore debug.keystore \
-            -alias androiddebugkey -keyalg RSA -keysize 2048 \
-            -validity 10000 -storepass android -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US"
-
-      - name: Build APK with Expo
+      - name: Build debug APK
         working-directory: artifacts/mobile
         run: npx expo run:android --no-install --variant debug
 
