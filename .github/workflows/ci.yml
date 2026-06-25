@@ -25,16 +25,10 @@ jobs:
         working-directory: artifacts/mobile
         run: npx expo prebuild --platform android --no-install
 
-      - name: Bundle JS
-        working-directory: artifacts/mobile
+      - name: Force JS bundle in debug variant
+        working-directory: artifacts/mobile/android
         run: |
-          mkdir -p android/app/src/main/assets
-          npx expo bundle \
-            --platform android \
-            --dev false \
-            --entry-file node_modules/expo-router/entry.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+          sed -i '/autolinkLibrariesWithApp/i\    debuggableVariants = []' app/build.gradle
 
       - name: Build APK
         working-directory: artifacts/mobile/android
