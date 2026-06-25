@@ -33,14 +33,14 @@ jobs:
             --entry-file node_modules/expo-router/entry.js \
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res
-      - name: Build release APK
+      - name: Build debug APK (with embedded bundle)
         working-directory: artifacts/mobile/android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: artifacts/mobile/android/app/build/outputs/apk/release/*.apk
+          path: artifacts/mobile/android/app/build/outputs/apk/debug/*.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
