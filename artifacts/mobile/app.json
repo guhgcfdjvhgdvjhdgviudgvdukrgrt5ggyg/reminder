@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Reminder App",
-    "slug": "mobile",
+    "slug": "reminder-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobile",
+    "scheme": "reminderapp",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -15,6 +15,7 @@
     },
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "com.reminder.app",
       "infoPlist": {
         "UIBackgroundModes": ["fetch", "remote-notification"]
       }
@@ -32,12 +33,7 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
-      [
-        "expo-router",
-        {
-          "origin": "https://replit.com/"
-        }
-      ],
+      "expo-router",
       "expo-font",
       "expo-web-browser",
       [
