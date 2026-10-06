@@ -73,3 +73,11 @@ dependencies {
 android {
     ndkVersion "26.1.10909125"
 }
+
+android {
+    sourceSets {
+        main {
+            res.srcDirs = ['src/main/res']
+        }
+    }
+}
