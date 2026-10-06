@@ -14,7 +14,7 @@
     <application
         android:name="${applicationName}"
         android:label="RemindMe"
-        android:icon="@android:drawable/ic_lock_idle_alarm"
+        android:icon="@drawable/ic_launcher_foreground"
         android:enableOnBackInvokedCallback="true">
 
         <activity
