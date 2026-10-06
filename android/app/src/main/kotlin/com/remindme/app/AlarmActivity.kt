@@ -1,7 +1,6 @@
 package com.remindme.app
 
 import android.content.Context
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
@@ -9,9 +8,11 @@ import android.os.Vibrator
 import android.os.VibrationEffect
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.remindme.app.R
 import android.widget.Button
 import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AlarmActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
@@ -34,7 +35,7 @@ class AlarmActivity : AppCompatActivity() {
 
         val title = intent.getStringExtra("title") ?: "Reminder"
         findViewById<TextView>(R.id.alarmTitle).text = title
-        findViewById<TextView>(R.id.alarmTime).text = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
+        findViewById<TextView>(R.id.alarmTime).text = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
 
         findViewById<Button>(R.id.btnSnooze).setOnClickListener {
             stopRingtone()
@@ -51,7 +52,11 @@ class AlarmActivity : AppCompatActivity() {
 
     private fun startRingtone() {
         try {
-            mediaPlayer = MediaPlayer.create(this, R.raw.alarm_default)
+            mediaPlayer = MediaPlayer()
+            // Use default notification sound as fallback
+            val uri = android.provider.Settings.System.DEFAULT_ALARM_ALERT_URI
+            mediaPlayer?.setDataSource(this, uri)
+            mediaPlayer?.prepare()
             mediaPlayer?.isLooping = true
             mediaPlayer?.start()
         } catch (e: Exception) {

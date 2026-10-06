@@ -7,9 +7,9 @@ import android.content.Intent
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
-            intent.action == Intent.ACTION_QUICKBOOT_POWERON ||
+            intent.action == "android.intent.action.QUICKBOOT_POWERON" ||
             intent.action == "com.htc.intent.action.QUICKBOOT_POWERON" ||
-            intent.action == Intent.ACTION_REBOOT
+            intent.action == "android.intent.action.REBOOT"
         ) {
             // TODO: Reschedule active alarms from DB
         }
