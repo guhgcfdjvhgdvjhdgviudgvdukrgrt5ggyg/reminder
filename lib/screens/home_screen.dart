@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../providers/reminder_provider.dart';
 import '../models/reminder.dart';
 import 'add_reminder_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,16 +13,44 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        context.read<ReminderProvider>().loadReminders());
+    _tabController = TabController(length: 3, vsync: this);
+    Future.microtask(() => context.read<ReminderProvider>().loadReminders());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   String _formatDateTime(DateTime dt) {
-    return DateFormat('dd MMM, hh:mm a').format(dt);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final date = DateTime(dt.year, dt.month, dt.day);
+
+    final time = DateFormat('hh:mm a').format(dt);
+    if (date == today) return 'Aaj, $time';
+    if (date == tomorrow) return 'Kal, $time';
+    return '${DateFormat('dd MMM').format(dt)}, $time';
+  }
+
+  String _formatDate(DateTime dt) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final date = DateTime(dt.year, dt.month, dt.day);
+
+    if (date == today) return 'Aaj';
+    if (date == tomorrow) return 'Kal';
+    return DateFormat('EEEE, dd MMM').format(dt);
   }
 
   @override
@@ -30,126 +59,375 @@ class _HomeScreenState extends State<HomeScreen> {
     final upcoming = provider.upcoming;
     final completed = provider.completed;
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('RemindMe'),
-          centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Aaj/Aane wale'),
-              Tab(text: 'Active'),
-              Tab(text: 'Complete'),
-            ],
-          ),
-        ),
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              expandedHeight: 120,
+              floating: true,
+              pinned: true,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                title: Text(
+                  'RemindMe',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SettingsScreen()),
+                    );
+                  },
+                ),
+              ],
+              bottom: TabBar(
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.upcoming, size: 18),
+                        const SizedBox(width: 6),
+                        Text('Aane wale (${upcoming.length})'),
+                      ],
+                    ),
+                  ),
+                  Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.check_circle_outline, size: 18),
+                        const SizedBox(width: 6),
+                        Text('Complete (${completed.length})'),
+                      ],
+                    ),
+                  ),
+                  const Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.history, size: 18),
+                        SizedBox(width: 6),
+                        Text('Sab'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ];
+        },
         body: TabBarView(
+          controller: _tabController,
           children: [
-            _buildList(upcoming, showDone: true),
-            _buildList(upcoming),
-            _buildList(completed, showUndo: true),
+            _buildReminderList(upcoming, isUpcoming: true),
+            _buildReminderList(completed, isCompleted: true),
+            _buildAllReminders(upcoming, completed),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const AddReminderScreen()),
-            );
-            if (mounted) context.read<ReminderProvider>().loadReminders();
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => const AddReminderScreen(),
+              transitionsBuilder: (_, animation, __, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 1),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: child,
+                );
+              },
+            ),
+          );
+          if (mounted) context.read<ReminderProvider>().loadReminders();
+        },
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Naya Reminder'),
+      ),
+    );
+  }
+
+  Widget _buildReminderList(List<Reminder> items,
+      {bool isUpcoming = false, bool isCompleted = false}) {
+    if (items.isEmpty) {
+      return _buildEmptyState(isUpcoming, isCompleted);
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+      itemCount: items.length,
+      itemBuilder: (context, i) {
+        final r = items[i];
+        return Dismissible(
+          key: Key('reminder_${r.id}'),
+          direction: isCompleted
+              ? DismissDirection.endToStart
+              : DismissDirection.horizontal,
+          background: Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 24),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(Icons.check, color: Colors.white, size: 28),
+          ),
+          secondaryBackground: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 24),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white, size: 28),
+          ),
+          confirmDismiss: (direction) async {
+            if (isCompleted && direction == DismissDirection.endToStart) {
+              return true;
+            }
+            if (direction == DismissDirection.startToEnd) {
+              await context.read<ReminderProvider>().updateReminder(
+                    r.copyWith(isDone: true, isActive: false),
+                  );
+              return false;
+            }
+            if (direction == DismissDirection.endToStart) {
+              return true;
+            }
+            return false;
           },
-          icon: const Icon(Icons.add),
-          label: const Text('Naya Reminder'),
+          onDismissed: (direction) {
+            if (isCompleted && direction == DismissDirection.endToStart) {
+              if (r.id != null) {
+                context.read<ReminderProvider>().deleteReminder(r.id!);
+              }
+            }
+          },
+          child: _buildReminderCard(r, isUpcoming, isCompleted),
+        );
+      },
+    );
+  }
+
+  Widget _buildAllReminders(List<Reminder> upcoming, List<Reminder> completed) {
+    final all = [...upcoming, ...completed];
+    if (all.isEmpty) {
+      return _buildEmptyState(true, false);
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+      itemCount: all.length,
+      itemBuilder: (context, i) {
+        final r = all[i];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildReminderCard(r, !r.isDone, r.isDone),
+        );
+      },
+    );
+  }
+
+  Widget _buildReminderCard(Reminder r, bool isUpcoming, bool isCompleted) {
+    final isPast = r.dateTime.isBefore(DateTime.now()) && !r.isDone;
+    final color = isCompleted
+        ? Colors.green
+        : isPast
+            ? Colors.orange
+            : const Color(0xFF6366F1);
+
+    return Card(
+      child: InkWell(
+        onTap: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddReminderScreen(reminder: r),
+            ),
+          );
+          if (mounted) context.read<ReminderProvider>().loadReminders();
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  isCompleted
+                      ? Icons.check_circle
+                      : isPast
+                          ? Icons.warning_rounded
+                          : Icons.alarm,
+                  color: color,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      r.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        decoration:
+                            isCompleted ? TextDecoration.lineThrough : null,
+                        color: isCompleted ? Colors.grey : null,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _formatDateTime(r.dateTime),
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        if (r.repeatType != RepeatType.none) ...[
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.repeat,
+                            size: 14,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            r.repeatType == RepeatType.daily
+                                ? 'Daily'
+                                : r.repeatType == RepeatType.weekly
+                                    ? 'Weekly'
+                                    : 'Monthly',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (r.note.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        r.note,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (isUpcoming)
+                Switch(
+                  value: r.isActive,
+                  onChanged: (v) async {
+                    await context
+                        .read<ReminderProvider>()
+                        .updateReminder(r.copyWith(isActive: v));
+                  },
+                ),
+              if (isCompleted)
+                IconButton(
+                  icon: const Icon(Icons.restore, color: Colors.grey),
+                  onPressed: () async {
+                    await context.read<ReminderProvider>().updateReminder(
+                          r.copyWith(isDone: false, isActive: true),
+                        );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildList(List<Reminder> items, {bool showDone = false, bool showUndo = false}) {
-    if (items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.alarm_off_outlined, size: 72, color: Colors.grey[400]),
-            const SizedBox(height: 12),
-            Text(
-              showUndo ? 'Koi complete nahi' : 'Koi reminder nahi\n+ dabao naya banane ke liye',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
+  Widget _buildEmptyState(bool isUpcoming, bool isCompleted) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6366F1).withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: items.length,
-      itemBuilder: (context, i) {
-        final r = items[i];
-        return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Icon(r.vibrate ? Icons.notifications_active : Icons.notifications),
+            child: Icon(
+              isCompleted
+                  ? Icons.task_alt
+                  : isUpcoming
+                      ? Icons.alarm_off_rounded
+                      : Icons.inbox_rounded,
+              size: 56,
+              color: const Color(0xFF6366F1).withOpacity(0.5),
             ),
-            title: Text(r.label, maxLines: 1, overflow: TextOverflow.ellipsis),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_formatDateTime(r.dateTime)),
-                if (r.note.isNotEmpty)
-                  Text(r.note, maxLines: 1, overflow: TextOverflow.ellipsis),
-              ],
-            ),
-            trailing: showDone
-                ? IconButton(
-                    icon: const Icon(Icons.check_circle_outline),
-                    onPressed: () async {
-                      await context.read<ReminderProvider>().updateReminder(
-                            r.copyWith(isDone: true, isActive: false),
-                          );
-                    },
-                  )
-                : showUndo
-                    ? IconButton(
-                        icon: const Icon(Icons.restore),
-                        onPressed: () async {
-                          await context.read<ReminderProvider>().updateReminder(
-                                r.copyWith(isDone: false, isActive: true),
-                              );
-                        },
-                      )
-                    : Switch(
-                        value: r.isActive,
-                        onChanged: (v) async {
-                          await context.read<ReminderProvider>().updateReminder(
-                                r.copyWith(isActive: v),
-                              );
-                        },
-                      ),
-            onLongPress: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Delete Reminder'),
-                  content: Text('Kya tum "${r.label}" delete karna chaho ge?'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                    FilledButton.tonal(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
-                  ],
-                ),
-              );
-              if (confirm == true && r.id != null) {
-                await context.read<ReminderProvider>().deleteReminder(r.id!);
-              }
-            },
           ),
-        );
-      },
+          const SizedBox(height: 24),
+          Text(
+            isCompleted
+                ? 'Koi complete nahi'
+                : isUpcoming
+                    ? 'Koi reminder nahi'
+                    : 'Kuch nahi mila',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isCompleted
+                ? 'Jab reminder complete hoga to yahan dikhega'
+                : 'Naya reminder banane ke liye + dabao',
+            style: TextStyle(
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
