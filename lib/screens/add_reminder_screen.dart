@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/reminder.dart';
 import '../providers/reminder_provider.dart';
 import '../services/notification_service.dart';
+import '../widgets/ringtone_picker.dart';
 
 class AddReminderScreen extends StatefulWidget {
   final Reminder? reminder;
@@ -128,81 +129,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.4,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              children: [
-                const SizedBox(height: 12),
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Select Ringtone',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    itemCount: availableRingtones.length,
-                    itemBuilder: (context, index) {
-                      final ringtone = availableRingtones[index];
-                      final isSelected = _ringtone == ringtone.name;
-                      return ListTile(
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFF6366F1).withOpacity(0.1)
-                                : Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.music_note,
-                            color: isSelected
-                                ? const Color(0xFF6366F1)
-                                : Colors.grey,
-                            size: 20,
-                          ),
-                        ),
-                        title: Text(
-                          ringtone.name,
-                          style: TextStyle(
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(
-                                Icons.check_circle,
-                                color: Color(0xFF6366F1),
-                              )
-                            : null,
-                        onTap: () {
-                          Navigator.pop(context, ringtone.name);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        return RingtonePickerSheet(selectedRingtone: _ringtone);
       },
     );
     if (selected != null) {
