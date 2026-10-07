@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen>
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 120,
+              expandedHeight: 140,
               floating: true,
               pinned: true,
               elevation: 0,
@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen>
                   'RemindMe',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 28,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
