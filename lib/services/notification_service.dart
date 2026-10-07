@@ -14,7 +14,8 @@ class NotificationService {
         iOS: iosInit,
       );
 
-      await _plugin.initialize(initSettings);
+      await _plugin.initialize(initSettings,
+          onDidReceiveNotificationResponse: (response) {});
 
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'alarm_channel',
@@ -24,51 +25,13 @@ class NotificationService {
         playSound: true,
         enableVibration: true,
         showBadge: false,
+        sound: null,
       );
 
       await _plugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(channel);
-    } catch (e) {
-      // Ignore init errors - app should still work
-    }
-  }
-
-  static Future<void> showHeadsUp({
-    required int id,
-    required String title,
-    required String body,
-    String? payload,
-  }) async {
-    try {
-      const androidDetails = AndroidNotificationDetails(
-        'alarm_channel',
-        'Alarm Reminders',
-        channelDescription: 'Alarm',
-        importance: Importance.max,
-        priority: Priority.high,
-        fullScreenIntent: true,
-        category: AndroidNotificationCategory.alarm,
-        autoCancel: false,
-        showWhen: true,
-        enableVibration: true,
-        playSound: true,
-      );
-
-      const iosDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      );
-
-      await _plugin.show(
-        id,
-        title,
-        body,
-        const NotificationDetails(android: androidDetails, iOS: iosDetails),
-        payload: payload,
-      );
     } catch (e) {
       // Ignore
     }
@@ -88,7 +51,7 @@ class NotificationService {
         title,
         body,
         tz.TZDateTime.from(scheduledTime, tz.local),
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'alarm_channel',
             'Alarm Reminders',
@@ -99,13 +62,14 @@ class NotificationService {
             category: AndroidNotificationCategory.alarm,
             autoCancel: false,
             showWhen: true,
-            enableVibration: true,
-            playSound: true,
+            enableVibration: vibrate,
+            playSound: false,
+            ongoing: true,
           ),
           iOS: DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
-            presentSound: true,
+            presentSound: false,
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
