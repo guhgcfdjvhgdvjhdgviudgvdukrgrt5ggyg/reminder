@@ -3,7 +3,6 @@ package com.remindme.app
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -54,20 +53,51 @@ class AlarmActivity : AppCompatActivity() {
         startRingtone(ringtoneName)
     }
 
+    private fun getRawUri(context: Context, rawName: String): Uri {
+        val resId = context.resources.getIdentifier(rawName, "raw", context.packageName)
+        return Uri.parse("android.resource://${context.packageName}/$resId")
+    }
+
     private fun startRingtone(ringtoneName: String) {
         try {
-            val uri = getRingtoneUri(ringtoneName)
-            mediaPlayer = MediaPlayer()
-            mediaPlayer?.setAudioAttributes(
+            val name = ringtoneName.lowercase()
+            val mediaPlayer = MediaPlayer()
+            this.mediaPlayer = mediaPlayer
+            val uri = when (name) {
+                "alarm" -> getRawUri(this, "alarm")
+                "bell" -> getRawUri(this, "bell")
+                "birds" -> getRawUri(this, "birds")
+                "chime" -> getRawUri(this, "chime")
+                "digital" -> getRawUri(this, "digital")
+                "ding" -> getRawUri(this, "ding")
+                "drop" -> getRawUri(this, "drop")
+                "harmony" -> getRawUri(this, "harmony")
+                "marimba" -> getRawUri(this, "marimba")
+                "melody" -> getRawUri(this, "melody")
+                "morning" -> getRawUri(this, "morning")
+                "music" -> getRawUri(this, "music")
+                "piano" -> getRawUri(this, "piano")
+                "pop" -> getRawUri(this, "pop")
+                "radar" -> getRawUri(this, "radar")
+                "signal" -> getRawUri(this, "signal")
+                "siren" -> getRawUri(this, "siren")
+                "star" -> getRawUri(this, "star")
+                "sunrise" -> getRawUri(this, "sunrise")
+                "twinkle" -> getRawUri(this, "twinkle")
+                "whistle" -> getRawUri(this, "whistle")
+                "default" -> getRawUri(this, "default")
+                else -> getRawUri(this, "default")
+            }
+            mediaPlayer.setAudioAttributes(
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build()
             )
-            mediaPlayer?.setDataSource(this, uri)
-            mediaPlayer?.prepare()
-            mediaPlayer?.isLooping = true
-            mediaPlayer?.start()
+            mediaPlayer.setDataSource(this, uri)
+            mediaPlayer.prepare()
+            mediaPlayer.isLooping = true
+            mediaPlayer.start()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -78,33 +108,6 @@ class AlarmActivity : AppCompatActivity() {
         } else {
             @Suppress("DEPRECATION")
             vibrator?.vibrate(longArrayOf(0, 500, 1000), 0)
-        }
-    }
-
-    private fun getRingtoneUri(name: String): Uri {
-        return when (name.lowercase()) {
-            "alarm" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            "bell" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "birds" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "chime" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "digital" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "ding" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "drop" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "harmony" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "marimba" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "melody" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "morning" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "music" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "piano" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "pop" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "radar" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "signal" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "siren" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            "star" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "sunrise" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "twinkle" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            "whistle" -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            else -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         }
     }
 
