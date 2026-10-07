@@ -79,6 +79,8 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledTime,
+    String ringtone = "Default",
+    bool vibrate = true,
   }) async {
     try {
       await _plugin.zonedSchedule(

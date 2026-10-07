@@ -172,18 +172,20 @@ class _AddReminderScreenState extends State<AddReminderScreen>
       isDone: false,
     );
 
+    int? remId = r.id;
     if (isEditing) {
       await context.read<ReminderProvider>().updateReminder(r);
     } else {
-      await context.read<ReminderProvider>().addReminder(r);
+      remId = await context.read<ReminderProvider>().addReminder(r);
     }
 
-    if (r.id != null) {
+    if (remId != null) {
       await NotificationService.scheduleNotification(
-        id: r.id!,
+        id: remId,
         title: r.label,
         body: r.note.isNotEmpty ? r.note : 'Reminder',
         scheduledTime: r.dateTime,
+        ringtone: r.ringtone,
       );
     }
 

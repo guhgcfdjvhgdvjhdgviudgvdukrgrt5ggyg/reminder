@@ -61,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen>
         title: r.label,
         body: r.note.isNotEmpty ? r.note : 'Reminder',
         scheduledTime: r.dateTime,
+        ringtone: r.ringtone,
       );
     }
   }
