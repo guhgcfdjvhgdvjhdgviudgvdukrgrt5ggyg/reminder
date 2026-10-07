@@ -19,6 +19,8 @@ class AlarmService : Service() {
                 "Alarm Service",
                 NotificationManager.IMPORTANCE_HIGH
             )
+            channel.setSound(null, null)
+            channel.enableVibration(false)
             val nm = getSystemService(NotificationManager::class.java)
             nm.createNotificationChannel(channel)
         }
@@ -30,11 +32,11 @@ class AlarmService : Service() {
         val alarmIntent = Intent(this, AlarmActivity::class.java)
         alarmIntent.putExtra("title", title)
         alarmIntent.putExtra("ringtone", ringtone)
-        alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
         val pending = PendingIntent.getActivity(
             this,
-            0,
+            System.currentTimeMillis().toInt(),
             alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -47,11 +49,13 @@ class AlarmService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pending, true)
             .setAutoCancel(true)
+            .setSound(null)
             .build()
 
         startForeground(1, notification)
         startActivity(alarmIntent)
-        return START_STICKY
+        stopForeground(false)
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
