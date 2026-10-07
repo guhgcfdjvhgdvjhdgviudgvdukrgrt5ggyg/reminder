@@ -31,28 +31,25 @@ class _AddReminderScreenState extends State<AddReminderScreen>
   @override
   void initState() {
     super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
-    _animController.forward();
-
-    if (isEditing) {
-      final r = widget.reminder!;
+    final r = widget.reminder;
+    if (r != null) {
       _labelController.text = r.label;
       _noteController.text = r.note;
       _selectedDate = r.dateTime;
       _repeatType = r.repeatType;
-      _snoozeMinutes = r.snoozeMinutes;
       _ringtone = r.ringtone;
-      _vibrate = r.vibrate;
     } else {
-      _selectedDate = DateTime.now().add(const Duration(minutes: 10));
+      _selectedDate = DateTime.now().add(const Duration(minutes: 5));
     }
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _fadeAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+    _animController.forward();
   }
 
   @override
@@ -63,62 +60,28 @@ class _AddReminderScreenState extends State<AddReminderScreen>
     super.dispose();
   }
 
-  Future<void> _pickDate() async {
-    final d = await showDatePicker(
+  Future<void> _selectDateTime() async {
+    final date = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: const Color(0xFF6366F1),
-                ),
-          ),
-          child: child!,
-        );
-      },
     );
-    if (d != null) {
-      setState(() {
-        _selectedDate = DateTime(
-          d.year,
-          d.month,
-          d.day,
-          _selectedDate.hour,
-          _selectedDate.minute,
-        );
-      });
-    }
-  }
-
-  Future<void> _pickTime() async {
-    final t = await showTimePicker(
+    if (date == null) return;
+    final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_selectedDate),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: const Color(0xFF6366F1),
-                ),
-          ),
-          child: child!,
-        );
-      },
     );
-    if (t != null) {
-      setState(() {
-        _selectedDate = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          t.hour,
-          t.minute,
-        );
-      });
-    }
+    if (time == null) return;
+    setState(() {
+      _selectedDate = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+    });
   }
 
   Future<void> _pickRingtone() async {
@@ -202,29 +165,30 @@ class _AddReminderScreenState extends State<AddReminderScreen>
             IconButton(
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
-                final confirm = await showDialog<bool>(
+                final confirmed = await showDialog<bool>(
                   context: context,
-                  builder: (ctx) => AlertDialog(
+                  builder: (context) => AlertDialog(
                     title: const Text('Delete Reminder'),
-                    content: Text(
-                        'Are you sure you want to delete "${widget.reminder!.label}"?'),
+                    content: const Text('Are you sure you want to delete this reminder?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
+                        onPressed: () => Navigator.pop(context, false),
                         child: const Text('Cancel'),
                       ),
-                      FilledButton.tonal(
-                        onPressed: () => Navigator.pop(ctx, true),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
                         child: const Text('Delete'),
                       ),
                     ],
                   ),
                 );
-                if (confirm == true && widget.reminder?.id != null) {
-                  await context
-                      .read<ReminderProvider>()
-                      .deleteReminder(widget.reminder!.id!);
-                  if (mounted) Navigator.pop(context);
+                if (confirmed == true && widget.reminder?.id != null && mounted) {
+                  await context.read<ReminderProvider>().deleteReminder(widget.reminder!.id!);
+                  await NotificationService.cancel(widget.reminder!.id!);
+                  Navigator.pop(context);
                 }
               },
             ),
@@ -232,228 +196,141 @@ class _AddReminderScreenState extends State<AddReminderScreen>
       ),
       body: FadeTransition(
         opacity: _fadeAnim,
-        child: ListView(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
-          children: [
-            TextField(
-              controller: _labelController,
-              decoration: const InputDecoration(
-                labelText: 'Label (Title)',
-                hintText: 'e.g. Doctor appointment',
-                prefixIcon: Icon(Icons.label_outline),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildPickerCard(
-                    icon: Icons.calendar_today,
-                    label: 'Date',
-                    value: DateFormat('dd MMM yyyy').format(_selectedDate),
-                    onTap: _pickDate,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildPickerCard(
-                    icon: Icons.access_time,
-                    label: 'Time',
-                    value: DateFormat('hh:mm a').format(_selectedDate),
-                    onTap: _pickTime,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildSection(
-              icon: Icons.music_note,
-              title: 'Ringtone',
-              child: Card(
-                child: ListTile(
-                  leading: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.music_note,
-                      color: Color(0xFF6366F1),
-                      size: 20,
-                    ),
-                  ),
-                  title: Text(
-                    _ringtone,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                  onTap: _pickRingtone,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildSection(
-              icon: Icons.repeat,
-              title: 'Repeat',
-              child: Wrap(
-                spacing: 8,
-                children: RepeatType.values.map((type) {
-                  final isSelected = _repeatType == type;
-                  final label = type == RepeatType.none
-                      ? 'Once'
-                      : type == RepeatType.daily
-                          ? 'Daily'
-                          : type == RepeatType.weekly
-                              ? 'Weekly'
-                              : 'Monthly';
-                  return ChoiceChip(
-                    label: Text(label),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() => _repeatType = type);
-                      }
-                    },
-                    selectedColor: const Color(0xFF6366F1).withOpacity(0.2),
-                    labelStyle: TextStyle(
-                      color: isSelected ? const Color(0xFF6366F1) : null,
-                      fontWeight: isSelected ? FontWeight.w600 : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildSection(
-              icon: Icons.snooze,
-              title: 'Snooze Duration',
-              child: Wrap(
-                spacing: 8,
-                children: [5, 10, 15, 30].map((min) {
-                  final isSelected = _snoozeMinutes == min;
-                  return ChoiceChip(
-                    label: Text('$min min'),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() => _snoozeMinutes = min);
-                      }
-                    },
-                    selectedColor: const Color(0xFF6366F1).withOpacity(0.2),
-                    labelStyle: TextStyle(
-                      color: isSelected ? const Color(0xFF6366F1) : null,
-                      fontWeight: isSelected ? FontWeight.w600 : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildSection(
-              icon: Icons.vibration,
-              title: 'Vibration',
-              child: SwitchListTile(
-                value: _vibrate,
-                onChanged: (v) => setState(() => _vibrate = v),
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Vibrate with alarm'),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _noteController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Note (Optional)',
-                hintText: 'Add extra info...',
-                alignLabelWithHint: true,
-              ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              height: 56,
-              child: FilledButton.icon(
-                onPressed: _save,
-                icon: Icon(isEditing ? Icons.save : Icons.add),
-                label: Text(isEditing ? 'Update Reminder' : 'Save Reminder'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPickerCard({
-    required IconData icon,
-    required String label,
-    required String value,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(icon, size: 18, color: const Color(0xFF6366F1)),
-                  const SizedBox(width: 6),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              TextField(
+                controller: _labelController,
+                decoration: const InputDecoration(
+                  labelText: 'Reminder Title',
+                  prefixIcon: Icon(Icons.text_fields_outlined),
+                ),
+                textCapitalization: TextCapitalization.sentences,
               ),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: const TextStyle(
+              const SizedBox(height: 16),
+              TextField(
+                controller: _noteController,
+                decoration: const InputDecoration(
+                  labelText: 'Note (Optional)',
+                  prefixIcon: Icon(Icons.notes_outlined),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'When',
+                style: TextStyle(
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
                 ),
               ),
+              const SizedBox(height: 12),
+              Card(
+                child: InkWell(
+                  onTap: _selectDateTime,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6366F1).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.access_time,
+                            color: Color(0xFF6366F1),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                DateFormat('EEEE, dd MMM yyyy').format(_selectedDate),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                DateFormat('hh:mm a').format(_selectedDate),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Ringtone',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Card(
+                child: InkWell(
+                  onTap: _pickRingtone,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6366F1).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.music_note,
+                            color: Color(0xFF6366F1),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            _ringtone,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              FilledButton(
+                onPressed: _save,
+                child: Text(isEditing ? 'Save Changes' : 'Create Reminder'),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSection({
-    required IconData icon,
-    required String title,
-    required Widget child,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 20, color: const Color(0xFF6366F1)),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        child,
-      ],
     );
   }
 }
