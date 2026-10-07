@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/reminder.dart';
 import '../providers/reminder_provider.dart';
+import '../services/notification_service.dart';
 
 class AddReminderScreen extends StatefulWidget {
   final Reminder? reminder;
@@ -249,6 +250,16 @@ class _AddReminderScreenState extends State<AddReminderScreen>
     } else {
       await context.read<ReminderProvider>().addReminder(r);
     }
+
+    if (r.id != null) {
+      await NotificationService.scheduleNotification(
+        id: r.id!,
+        title: r.label,
+        body: r.note.isNotEmpty ? r.note : 'Reminder',
+        scheduledTime: r.dateTime,
+      );
+    }
+
     if (mounted) Navigator.pop(context);
   }
 

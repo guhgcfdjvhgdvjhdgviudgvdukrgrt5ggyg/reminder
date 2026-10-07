@@ -88,11 +88,23 @@ class NotificationService {
         tz.TZDateTime.from(scheduledTime, tz.local),
         const NotificationDetails(
           android: AndroidNotificationDetails(
-            'reminder_channel',
-            'Reminders',
-            importance: Importance.high,
+            'alarm_channel',
+            'Alarm Reminders',
+            channelDescription: 'Alarm',
+            importance: Importance.max,
+            priority: Priority.high,
+            fullScreenIntent: true,
+            category: AndroidNotificationCategory.alarm,
+            autoCancel: false,
+            showWhen: true,
+            enableVibration: true,
+            playSound: true,
           ),
-          iOS: DarwinNotificationDetails(),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:

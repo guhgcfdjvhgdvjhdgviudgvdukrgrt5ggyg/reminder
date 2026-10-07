@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../providers/reminder_provider.dart';
 import '../models/reminder.dart';
+import '../services/notification_service.dart';
 import 'add_reminder_screen.dart';
 import 'settings_screen.dart';
 
@@ -51,6 +52,23 @@ class _HomeScreenState extends State<HomeScreen>
     if (date == today) return 'Today, $time';
     if (date == tomorrow) return 'Tomorrow, $time';
     return '${DateFormat('dd MMM').format(dt)}, $time';
+  }
+
+  Future<void> _scheduleReminder(Reminder r) async {
+    if (r.id != null && r.isActive && !r.isDone) {
+      await NotificationService.scheduleNotification(
+        id: r.id!,
+        title: r.label,
+        body: r.note.isNotEmpty ? r.note : 'Reminder',
+        scheduledTime: r.dateTime,
+      );
+    }
+  }
+
+  Future<void> _cancelReminder(Reminder r) async {
+    if (r.id != null) {
+      await NotificationService.cancel(r.id!);
+    }
   }
 
   @override
@@ -210,6 +228,7 @@ class _HomeScreenState extends State<HomeScreen>
               await context.read<ReminderProvider>().updateReminder(
                     r.copyWith(isDone: true, isActive: false),
                   );
+              await _cancelReminder(r);
               return false;
             }
             if (direction == DismissDirection.endToStart) {
@@ -363,18 +382,26 @@ class _HomeScreenState extends State<HomeScreen>
                 Switch(
                   value: r.isActive,
                   onChanged: (v) async {
+                    final updated = r.copyWith(isActive: v);
                     await context
                         .read<ReminderProvider>()
-                        .updateReminder(r.copyWith(isActive: v));
+                        .updateReminder(updated);
+                    if (v) {
+                      await _scheduleReminder(updated);
+                    } else {
+                      await _cancelReminder(updated);
+                    }
                   },
                 ),
               if (isCompleted)
                 IconButton(
                   icon: const Icon(Icons.restore, color: Colors.grey),
                   onPressed: () async {
-                    await context.read<ReminderProvider>().updateReminder(
-                          r.copyWith(isDone: false, isActive: true),
-                        );
+                    final updated = r.copyWith(isDone: false, isActive: true);
+                    await context
+                        .read<ReminderProvider>()
+                        .updateReminder(updated);
+                    await _scheduleReminder(updated);
                   },
                 ),
             ],
