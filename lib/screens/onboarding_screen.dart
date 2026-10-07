@@ -20,21 +20,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       icon: Icons.alarm_add_rounded,
       title: 'Reminders On Time',
       description:
-          'Waqt par alarm bajey ga — phone lock ho ya unlock ho, kabhi miss nahi hoga.',
+          'Alarms will ring on time — whether your phone is locked or unlocked. Never miss a reminder.',
       color: Color(0xFF6366F1),
     ),
     _OnboardingPage(
       icon: Icons.lock_open_rounded,
       title: 'Lock Screen Full-Screen',
       description:
-          'Phone locked hone par full-screen alarm dikhe ga — bilkul asli alarm clock ki tarah.',
+          'When your phone is locked, a full-screen alarm appears — just like a real alarm clock.',
       color: Color(0xFF8B5CF6),
     ),
     _OnboardingPage(
       icon: Icons.battery_charging_full_rounded,
       title: 'Reliable & Battery Friendly',
       description:
-          'Battery optimization ke baawajood bhi alarm bajega. Har phone par reliable.',
+          'Alarms work even with battery optimization. Reliable on every phone.',
       color: Color(0xFF06B6D4),
     ),
   ];

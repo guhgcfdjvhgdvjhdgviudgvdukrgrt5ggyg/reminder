@@ -43,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 icon: Icons.notifications_outlined,
                 title: 'Notifications',
-                subtitle: 'Permission status check',
+                subtitle: 'Check permission status',
                 onTap: () async {
                   final status = await Permission.notification.status;
                   if (context.mounted) {
@@ -51,8 +51,8 @@ class SettingsScreen extends StatelessWidget {
                       SnackBar(
                         content: Text(
                           status.isGranted
-                              ? 'Notifications allowed hain'
-                              : 'Notifications allowed nahi hain',
+                              ? 'Notifications are allowed'
+                              : 'Notifications are not allowed',
                         ),
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
@@ -67,7 +67,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 icon: Icons.alarm_outlined,
                 title: 'Exact Alarms',
-                subtitle: 'Waqt par alarm ke liye zaroori',
+                subtitle: 'Required for precise timing',
                 onTap: () async {
                   await openAppSettings();
                 },
@@ -76,7 +76,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 icon: Icons.battery_saver_outlined,
                 title: 'Battery Optimization',
-                subtitle: 'Unrestricted set karein',
+                subtitle: 'Set to Unrestricted',
                 onTap: () async {
                   await openAppSettings();
                 },
@@ -112,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     children: const [
                       Text(
-                        'RemindMe - Reminder & Alarm App\n\nWaqt par alarm bajega phone lock ho ya unlock ho.',
+                        'RemindMe - Reminder & Alarm App\n\nAlarms ring on time whether your phone is locked or unlocked.',
                       ),
                     ],
                   );
@@ -121,8 +121,8 @@ class SettingsScreen extends StatelessWidget {
               _buildTile(
                 context,
                 icon: Icons.restart_alt_outlined,
-                title: 'Onboarding Dobara Dekho',
-                subtitle: 'Intro slides phir se dekhein',
+                title: 'Show Onboarding Again',
+                subtitle: 'Replay intro slides',
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('showOnboarding', true);

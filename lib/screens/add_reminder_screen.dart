@@ -122,7 +122,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
     if (label.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Label likhein (title)'),
+          content: const Text('Please enter a label (title)'),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -163,7 +163,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Reminder' : 'Naya Reminder'),
+        title: Text(isEditing ? 'Edit Reminder' : 'New Reminder'),
         actions: [
           if (isEditing)
             IconButton(
@@ -173,8 +173,8 @@ class _AddReminderScreenState extends State<AddReminderScreen>
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: const Text('Delete Reminder'),
-                    content:
-                        Text('Kya tum "${widget.reminder!.label}" delete karna chaho ge?'),
+                    content: Text(
+                        'Are you sure you want to delete "${widget.reminder!.label}"?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
@@ -206,7 +206,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
               controller: _labelController,
               decoration: const InputDecoration(
                 labelText: 'Label (Title)',
-                hintText: 'Jaise: Doctor appointment',
+                hintText: 'e.g. Doctor appointment',
                 prefixIcon: Icon(Icons.label_outline),
               ),
             ),
@@ -297,7 +297,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
                 value: _vibrate,
                 onChanged: (v) => setState(() => _vibrate = v),
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Alarm ke sath vibration chalega'),
+                title: const Text('Vibrate with alarm'),
               ),
             ),
             const SizedBox(height: 20),
@@ -306,7 +306,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
               maxLines: 3,
               decoration: const InputDecoration(
                 labelText: 'Note (Optional)',
-                hintText: 'Kuch extra info likhein...',
+                hintText: 'Add extra info...',
                 alignLabelWithHint: true,
               ),
             ),

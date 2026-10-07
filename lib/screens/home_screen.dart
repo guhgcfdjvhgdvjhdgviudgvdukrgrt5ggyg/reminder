@@ -37,20 +37,9 @@ class _HomeScreenState extends State<HomeScreen>
     final date = DateTime(dt.year, dt.month, dt.day);
 
     final time = DateFormat('hh:mm a').format(dt);
-    if (date == today) return 'Aaj, $time';
-    if (date == tomorrow) return 'Kal, $time';
+    if (date == today) return 'Today, $time';
+    if (date == tomorrow) return 'Tomorrow, $time';
     return '${DateFormat('dd MMM').format(dt)}, $time';
-  }
-
-  String _formatDate(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final date = DateTime(dt.year, dt.month, dt.day);
-
-    if (date == today) return 'Aaj';
-    if (date == tomorrow) return 'Kal';
-    return DateFormat('EEEE, dd MMM').format(dt);
   }
 
   @override
@@ -100,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen>
                       children: [
                         const Icon(Icons.upcoming, size: 18),
                         const SizedBox(width: 6),
-                        Text('Aane wale (${upcoming.length})'),
+                        Text('Upcoming (${upcoming.length})'),
                       ],
                     ),
                   ),
@@ -110,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen>
                       children: [
                         const Icon(Icons.check_circle_outline, size: 18),
                         const SizedBox(width: 6),
-                        Text('Complete (${completed.length})'),
+                        Text('Completed (${completed.length})'),
                       ],
                     ),
                   ),
@@ -120,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen>
                       children: [
                         Icon(Icons.history, size: 18),
                         SizedBox(width: 6),
-                        Text('Sab'),
+                        Text('All'),
                       ],
                     ),
                   ),
@@ -161,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
           if (mounted) context.read<ReminderProvider>().loadReminders();
         },
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Naya Reminder'),
+        label: const Text('New Reminder'),
       ),
     );
   }
@@ -409,10 +398,10 @@ class _HomeScreenState extends State<HomeScreen>
           const SizedBox(height: 24),
           Text(
             isCompleted
-                ? 'Koi complete nahi'
+                ? 'No completed reminders'
                 : isUpcoming
-                    ? 'Koi reminder nahi'
-                    : 'Kuch nahi mila',
+                    ? 'No reminders yet'
+                    : 'Nothing found',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -420,8 +409,8 @@ class _HomeScreenState extends State<HomeScreen>
           const SizedBox(height: 8),
           Text(
             isCompleted
-                ? 'Jab reminder complete hoga to yahan dikhega'
-                : 'Naya reminder banane ke liye + dabao',
+                ? 'Completed reminders will appear here'
+                : 'Tap + to create a new reminder',
             style: TextStyle(
               color: Colors.grey.shade500,
             ),
