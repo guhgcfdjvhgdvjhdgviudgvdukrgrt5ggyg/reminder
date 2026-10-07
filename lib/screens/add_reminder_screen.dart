@@ -19,6 +19,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
   late DateTime _selectedDate;
   RepeatType _repeatType = RepeatType.none;
   int _snoozeMinutes = 10;
+  String _ringtone = 'Default';
   bool _vibrate = true;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -45,6 +46,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
       _selectedDate = r.dateTime;
       _repeatType = r.repeatType;
       _snoozeMinutes = r.snoozeMinutes;
+      _ringtone = r.ringtone;
       _vibrate = r.vibrate;
     } else {
       _selectedDate = DateTime.now().add(const Duration(minutes: 10));
@@ -117,6 +119,96 @@ class _AddReminderScreenState extends State<AddReminderScreen>
     }
   }
 
+  Future<void> _pickRingtone() async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Select Ringtone',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: availableRingtones.length,
+                    itemBuilder: (context, index) {
+                      final ringtone = availableRingtones[index];
+                      final isSelected = _ringtone == ringtone.name;
+                      return ListTile(
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF6366F1).withOpacity(0.1)
+                                : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.music_note,
+                            color: isSelected
+                                ? const Color(0xFF6366F1)
+                                : Colors.grey,
+                            size: 20,
+                          ),
+                        ),
+                        title: Text(
+                          ringtone.name,
+                          style: TextStyle(
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(
+                                Icons.check_circle,
+                                color: Color(0xFF6366F1),
+                              )
+                            : null,
+                        onTap: () {
+                          Navigator.pop(context, ringtone.name);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    if (selected != null) {
+      setState(() => _ringtone = selected);
+    }
+  }
+
   Future<void> _save() async {
     final label = _labelController.text.trim();
     if (label.isEmpty) {
@@ -146,6 +238,7 @@ class _AddReminderScreenState extends State<AddReminderScreen>
       repeatType: _repeatType,
       repeatDays: widget.reminder?.repeatDays ?? [],
       snoozeMinutes: _snoozeMinutes,
+      ringtone: _ringtone,
       vibrate: _vibrate,
       isActive: true,
       isDone: false,
@@ -231,6 +324,34 @@ class _AddReminderScreenState extends State<AddReminderScreen>
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            _buildSection(
+              icon: Icons.music_note,
+              title: 'Ringtone',
+              child: Card(
+                child: ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.music_note,
+                      color: Color(0xFF6366F1),
+                      size: 20,
+                    ),
+                  ),
+                  title: Text(
+                    _ringtone,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                  onTap: _pickRingtone,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             _buildSection(

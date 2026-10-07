@@ -26,8 +26,10 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val title = intent?.getStringExtra("title") ?: "Reminder"
+        val ringtone = intent?.getStringExtra("ringtone") ?: "Default"
         val alarmIntent = Intent(this, AlarmActivity::class.java)
         alarmIntent.putExtra("title", title)
+        alarmIntent.putExtra("ringtone", ringtone)
         alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val pending = PendingIntent.getActivity(
@@ -39,7 +41,7 @@ class AlarmService : Service() {
 
         val notification: Notification = NotificationCompat.Builder(this, "alarm_service")
             .setContentTitle(title)
-            .setContentText("Alarm time aagaya hai")
+            .setContentText("Alarm time!")
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -48,8 +50,6 @@ class AlarmService : Service() {
             .build()
 
         startForeground(1, notification)
-
-        // Launch full screen activity
         startActivity(alarmIntent)
         return START_STICKY
     }

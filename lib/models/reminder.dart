@@ -6,7 +6,7 @@ class Reminder {
   final String note;
   final DateTime dateTime;
   final RepeatType repeatType;
-  final List<int> repeatDays; // 1=Mon, 2=Tue ...
+  final List<int> repeatDays;
   final int snoozeMinutes;
   final String ringtone;
   final bool vibrate;
@@ -21,7 +21,7 @@ class Reminder {
     this.repeatType = RepeatType.none,
     this.repeatDays = const [],
     this.snoozeMinutes = 10,
-    this.ringtone = 'default',
+    this.ringtone = 'Default',
     this.vibrate = true,
     this.isActive = true,
     this.isDone = false,
@@ -59,7 +59,7 @@ class Reminder {
           .map((e) => int.parse(e))
           .toList(),
       snoozeMinutes: map['snoozeMinutes'] ?? 10,
-      ringtone: map['ringtone'] ?? 'default',
+      ringtone: map['ringtone'] ?? 'Default',
       vibrate: (map['vibrate'] ?? 1) == 1,
       isActive: (map['isActive'] ?? 1) == 1,
       isDone: (map['isDone'] ?? 0) == 1,
@@ -94,3 +94,34 @@ class Reminder {
     );
   }
 }
+
+class RingtoneOption {
+  final String name;
+  final String uri;
+  const RingtoneOption(this.name, this.uri);
+}
+
+const List<RingtoneOption> availableRingtones = [
+  RingtoneOption('Default', 'default'),
+  RingtoneOption('Alarm', 'alarm'),
+  RingtoneOption('Bell', 'bell'),
+  RingtoneOption('Birds', 'birds'),
+  RingtoneOption('Chime', 'chime'),
+  RingtoneOption('Digital', 'digital'),
+  RingtoneOption('Ding', 'ding'),
+  RingtoneOption('Drop', 'drop'),
+  RingtoneOption('Harmony', 'harmony'),
+  RingtoneOption('Marimba', 'marimba'),
+  RingtoneOption('Melody', 'melody'),
+  RingtoneOption('Morning', 'morning'),
+  RingtoneOption('Music', 'music'),
+  RingtoneOption('Piano', 'piano'),
+  RingtoneOption('Pop', 'pop'),
+  RingtoneOption('Radar', 'radar'),
+  RingtoneOption('Signal', 'signal'),
+  RingtoneOption('Siren', 'siren'),
+  RingtoneOption('Star', 'star'),
+  RingtoneOption('Sunrise', 'sunrise'),
+  RingtoneOption('Twinkle', 'twinkle'),
+  RingtoneOption('Whistle', 'whistle'),
+];

@@ -20,7 +20,7 @@ class DBHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (Database db, int version) async {
         await db.execute('''
           CREATE TABLE reminders(
@@ -37,6 +37,11 @@ class DBHelper {
             isDone INTEGER
           )
         ''');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE reminders ADD COLUMN ringtone TEXT DEFAULT "Default"');
+        }
       },
     );
   }
