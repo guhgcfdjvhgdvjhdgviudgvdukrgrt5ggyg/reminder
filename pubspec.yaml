@@ -19,6 +19,7 @@ dependencies:
   android_alarm_manager_plus: ^4.0.3
   permission_handler: ^11.3.1
   shared_preferences: ^2.2.3
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -27,6 +28,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  audioplayers: ^6.0.0
   assets:
     - assets/audio/
