@@ -31,7 +31,7 @@ class _RingtonePickerSheetState extends State<RingtonePickerSheet> {
   String _assetFor(String name) {
     final n = name.toLowerCase();
     switch (n) {
-      case 'default': return 'audio/default.mp3';
+      case 'default': return 'audio/defaulttone.mp3';
       case 'alarm': return 'audio/alarm.mp3';
       case 'bell': return 'audio/bell.mp3';
       case 'birds': return 'audio/birds.mp3';
@@ -53,7 +53,7 @@ class _RingtonePickerSheetState extends State<RingtonePickerSheet> {
       case 'sunrise': return 'audio/sunrise.mp3';
       case 'twinkle': return 'audio/twinkle.mp3';
       case 'whistle': return 'audio/whistle.mp3';
-      default: return 'audio/default.mp3';
+      default: return 'audio/defaulttone.mp3';
     }
   }
 

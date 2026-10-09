@@ -85,8 +85,8 @@ class AlarmActivity : AppCompatActivity() {
                 "sunrise" -> getRawUri(this, "sunrise")
                 "twinkle" -> getRawUri(this, "twinkle")
                 "whistle" -> getRawUri(this, "whistle")
-                "default" -> getRawUri(this, "default")
-                else -> getRawUri(this, "default")
+                "default" -> getRawUri(this, "defaulttone")
+                else -> getRawUri(this, "defaulttone")
             }
             mediaPlayer.setAudioAttributes(
                 AudioAttributes.Builder()
